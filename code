@@ -1,0 +1,76 @@
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+
+def answer_one():
+    raw_data = load_breast_cancer()
+    cancer = pd.DataFrame(data = raw_data['data'], columns = raw_data['feature_names'])
+    cancer['target'] = pd.Series(data = raw_data['target'])
+    
+    return cancer
+    
+answer_one()
+
+
+def answer_two():
+    cancerdf = answer_one()
+    target = cancerdf.target.value_counts(ascending=True)
+    target.index = ['malignant', 'benign']
+    
+    
+    return target
+answer_two()
+
+def answer_three():
+    cancerdf = answer_one()
+    X = cancerdf[cancerdf.columns[:-1]]
+    y = cancerdf['target']
+    
+    return X,y
+
+answer_three()
+
+from sklearn.model_selection import train_test_split
+
+def answer_four():
+    X, y = answer_three()
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
+    
+    return X_train, X_test, y_train, y_test
+
+answer_four()
+
+from sklearn.neighbors import KNeighborsClassifier
+
+def answer_five():
+    X_train, X_test, y_train, y_test = answer_four()
+    knn = KNeighborsClassifier(n_neighbors = 1)
+    knn.fit(X_train, y_train)
+    
+    return knn
+
+answer_five()
+
+def answer_six():
+    cancerdf = answer_one()
+    means = cancerdf.mean()[:-1].values.reshape(1, -1)
+    model = answer_five()
+    return model.predict(means)
+
+answer_six()
+
+def answer_seven():
+    X_train, X_test, y_train, y_test = answer_four()
+    knn = answer_five()
+    model = answer_five()
+    return model.predict(X_test)
+
+answer_seven()
+
+def answer_eight():
+    X_train, X_test, y_train, y_test = answer_four()
+    knn = answer_five()
+    
+    return knn.score(X_test, y_test)
+
+answer_eight()
